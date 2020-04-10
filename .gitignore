@@ -9,6 +9,9 @@
 .pytest_cache/
 __pycache__/
 
+# Data files
+data/
+
 # Artifacts
 dist/
 /build/
@@ -16,7 +19,7 @@ junit/
 *.egg-info
 
 # Secrets
-env_file
+*.env
 *.key
 *.crt
 *.pfx
