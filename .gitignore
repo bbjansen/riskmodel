@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+
+# Editor
+.vscode/
+
+# Caches
+.mypy_cache/
+.pytest_cache/
+__pycache__/
+
+# Artifacts
+dist/
+/build/
+junit/
+*.egg-info
+
+# Secrets
+env_file
+*.key
+*.crt
+*.pfx
+
+# ipynb checkpoints
+.ipynb_checkpoints

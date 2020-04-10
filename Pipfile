@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+jupyter = "*"
+pytest = "==5.3.5"
+autopep8 = "==1.5"
+flake8 = "==3.7.9"
+mypy = "==0.761"
+pydocstyle = "==5.0.2"
+
+[packages]
+python-dotenv = "*"
+pandas = "*"
+boto3 = "*"
+
+[requires]
+python_version = "3.7"
