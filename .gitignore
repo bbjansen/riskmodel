@@ -19,6 +19,7 @@ junit/
 *.egg-info
 
 # Secrets
+env_file
 *.env
 *.key
 *.crt
