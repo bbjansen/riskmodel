@@ -10,3 +10,6 @@ install:
 lint:
 	mypy src --ignore-missing-imports
 	flake8 src --ignore=$(shell cat flake_ignored)
+
+dev:
+	python setup.py develop
