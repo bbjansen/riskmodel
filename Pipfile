@@ -15,6 +15,7 @@ pydocstyle = "==5.0.2"
 python-dotenv = "*"
 pandas = "*"
 boto3 = "*"
+smart-open = "*"
 
 [requires]
 python_version = "3.7"
