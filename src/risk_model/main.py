@@ -74,7 +74,7 @@ def run(
             preprocessed_dir='data/preprocess/incorporation_processes/',
             split_variabele='{"_id":'
         )
-        log.info("Finished onliner to multiple, python readable JSON lines")
+        log.info("Parsed onliner to multiple, python readable JSON lines")
 
         # Split big json file into separate, python memorable json files
         preprocess.split_file_into_multiple_files(
