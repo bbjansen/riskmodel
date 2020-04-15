@@ -16,6 +16,7 @@ python-dotenv = "*"
 pandas = "*"
 boto3 = "*"
 smart-open = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.7"
