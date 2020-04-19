@@ -13,3 +13,13 @@ lint:
 
 dev:
 	python setup.py develop
+
+mongo_install:
+	@echo "Install mongodb locally"
+	@sudo apt update
+	@sudo apt install -y mongodb
+
+mongo_start: mongo_install
+	@echo "Start mongo db"
+	@sudo service mongodb start
+	@sudo service mongodb status
