@@ -4,9 +4,10 @@ import argparse
 import logging
 import sys
 import shutil
+import os
 
 from dotenv import load_dotenv
-from risk_model import storage, preprocess
+from risk_model import storage, preprocess, mongodb
 
 format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
@@ -19,6 +20,8 @@ BUCKET_NAME = 'legalthings-datalake'
 AWS_FILEPATHS = {
     'mongo/': ['csv', 'json']
 }
+
+MONGO_DB_NAME = "legalthings"
 
 
 def get_args():
@@ -84,10 +87,50 @@ def run(
             n_files=35,
             file_type='json'
         )
+
+        # Check total number of lines sum up
+        test_total_lines_subfiles(
+            directory='data/preprocess/incorporation_processes',
+            file_before_split='incorporation-processes.json',
+            new_sub_file_name='processes',
+            n_files=35
+        )
+
+        os.remove(os.path.join('data/preprocess/incorporation_processes',
+                               'incorporation-processes.json'))
         log.info("Finished splitting big json into separate files")
+
+    # Step 3: Create MongoDB from JSON subfiles.
+    mongodb.setup_mongodb(
+        log=log,
+        MONGO_DB_NAME=MONGO_DB_NAME,
+        file_directory=['data/preprocess/incorporation_processes/']
+    )
 
     log.info("Finished job.")
     return 0
+
+
+def test_total_lines_subfiles(
+    directory='data/preprocess/incorporation_processes',
+    file_before_split='incorporation-processes.json',
+    new_sub_file_name='processes',
+    n_files=35
+):
+    """Validates if line count orginal BIG file sums up
+    with line count of all subfiles together."""
+    line_count_orginal = sum(
+        1 for line in open(os.path.join(directory,
+                                        file_before_split)))
+
+    line_count = 0
+
+    for i in range(0, n_files):
+        file_name = os.path.join(directory,
+                                 '{}_{}.json'.format(new_sub_file_name, i))
+        line_count += sum(1 for line in open(file_name))
+
+    assert(line_count_orginal == line_count)
 
 
 if __name__ == "__main__":
