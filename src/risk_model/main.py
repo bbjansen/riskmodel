@@ -7,7 +7,7 @@ import shutil
 import os
 
 from dotenv import load_dotenv
-from risk_model import storage, preprocess, mongodb
+from risk_model import storage, preprocess, mongodb, mongo_to_dataframe
 
 format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
@@ -33,7 +33,9 @@ def get_args():
 def run(
     log,
     download=False,
-    parse_json=True
+    parse_json=False,
+    setup_mongodb=False,
+    create_pd_dateframe=True
 ):
     """Run job."""
 
@@ -83,7 +85,7 @@ def run(
         preprocess.split_file_into_multiple_files(
             directory='data/preprocess/incorporation_processes',
             file_to_split='incorporation-processes.json',
-            new_sub_file_name='processes',
+            new_sub_file_name='incorporation_processes',
             n_files=35,
             file_type='json'
         )
@@ -92,7 +94,7 @@ def run(
         test_total_lines_subfiles(
             directory='data/preprocess/incorporation_processes',
             file_before_split='incorporation-processes.json',
-            new_sub_file_name='processes',
+            new_sub_file_name='incorporation_processes',
             n_files=35
         )
 
@@ -101,11 +103,32 @@ def run(
         log.info("Finished splitting big json into separate files")
 
     # Step 3: Create MongoDB from JSON subfiles.
-    mongodb.setup_mongodb(
-        log=log,
-        MONGO_DB_NAME=MONGO_DB_NAME,
-        file_directory=['data/preprocess/incorporation_processes/']
-    )
+    if setup_mongodb:
+        mongodb.setup_mongodb(
+            log=log,
+            MONGO_DB_NAME=MONGO_DB_NAME,
+            file_directory=['data/preprocess/incorporation_processes/']
+        )
+
+    # Step 4: Extract features from collection and return pandas dataframe.
+    if create_pd_dateframe:
+        mongo_to_dataframe.run(
+            log=log,
+            MONGO_DB_NAME=MONGO_DB_NAME,
+            collection_name_like='processes',
+            features={
+                '_id': 1,
+                'name': 1,
+                'creation': 1,
+                'current.title': 1,
+                'current.activation_date': 1,
+                'current.actor.email': 1,
+                'current.actor.name': 1,
+                'private_data.incorporation_type': 1},
+            nested_features=['private_data.meta_data.ah'],
+            pandas_location='data/pandas/',
+            pandas_file_name='features.pkl'
+        )
 
     log.info("Finished job.")
     return 0

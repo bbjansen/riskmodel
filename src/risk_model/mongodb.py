@@ -14,6 +14,7 @@ def setup_mongodb(
     log.info("Start setup in {} mongodb".format(MONGO_DB_NAME))
 
     mongo_client = MongoClient('localhost', 27017)
+    mongo_client.drop_database('legalthings')
 
     db = mongo_client[MONGO_DB_NAME]
 
