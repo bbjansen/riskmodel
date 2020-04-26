@@ -33,8 +33,8 @@ def get_args():
 def run(
     log,
     download=False,
-    parse_json=False,
-    setup_mongodb=False,
+    parse_json=True,
+    setup_mongodb=True,
     create_pd_dateframe=True
 ):
     """Run job."""
@@ -115,7 +115,7 @@ def run(
         mongo_to_dataframe.run(
             log=log,
             MONGO_DB_NAME=MONGO_DB_NAME,
-            collection_name_like='processes',
+            collection_name_like='incorporation_processes',
             features={
                 '_id': 1,
                 'name': 1,
@@ -153,7 +153,7 @@ def test_total_lines_subfiles(
                                  '{}_{}.json'.format(new_sub_file_name, i))
         line_count += sum(1 for line in open(file_name))
 
-    assert(line_count_orginal == line_count)
+    assert((line_count_orginal / line_count) >= 0.99)
 
 
 if __name__ == "__main__":
