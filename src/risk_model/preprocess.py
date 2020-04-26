@@ -83,7 +83,8 @@ def split_file_into_multiple_files(
     with open(file) as bigfile:
         for i, lines in enumerate(chunks(bigfile, n_lines)):
             file_split = os.path.join(
-                directory, 'processes_{}.{}'.format(i, file_type))
+                directory, '{}_{}.{}'.format(
+                    new_sub_file_name, i, file_type))
 
             with open(file_split, 'w') as f:
                 f.writelines(lines)
