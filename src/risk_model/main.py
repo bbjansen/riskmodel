@@ -32,12 +32,26 @@ def get_args():
 
 def run(
     log,
-    download=False,
+    download=True,
     parse_json=True,
     setup_mongodb=True,
     create_pd_dateframe=True
 ):
-    """Run job."""
+    """Run risk calculator.
+
+    :params:
+        - download: boolean, default True
+            If True files from 'AWS_FILEPATHS' are downloaded from S3 'BUCKET_NAME'.
+        - parse_json: boolean, default True
+            If True 'incorporation-processes.json' will be parsed as multiple python
+            readable and memorizable JSON files.
+        - setup_mongodb: boolean, default True
+            If True a mongodb is setup locally where the JSON files will be stored.
+        - create_pd_dateframe: boolean, default True
+            If True a pandas dataframe is created and saved with the selected features
+            from the JSON files.
+
+    """
 
     # Step 1: Download files from AWS S3.
 
@@ -156,9 +170,30 @@ def test_total_lines_subfiles(
     assert((line_count_orginal / line_count) >= 0.99)
 
 
+def get_args():
+    """Parse user arguments."""
+    parser = argparse.ArgumentParser('Risk calculator')
+    parser.add_argument('--download', action='store_true')
+    parser.add_argument('--parse_json', action='store_true')
+    parser.add_argument('--setup_mongodb', action='store_true')
+    parser.add_argument('--create_pd_dateframe', action='store_true')
+
+    args = parser.parse_args()
+    logging.info("Parsing args: {}".format(args))
+
+    return args
+
+
 if __name__ == "__main__":
     log = logging.getLogger(__name__)
+    args = get_args()
+
     try:
-        sys.exit(run(log))
+        sys.exit(run(
+            log,
+            download=args.download,
+            parse_json=args.parse_json,
+            setup_mongodb=args.setup_mongodb,
+            create_pd_dateframe=args.create_pd_dateframe))
     except KeyboardInterrupt:
         print("\nYou stopped the program.")
